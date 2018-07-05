@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block title %}Images{% endblock %}
+{% block content %}
+
+<div class="container">
+<link rel="stylesheet" href="{% static 'css/mansory-style.css' %}" type="text/css" />
+<div id="my-gallery-container">
+  {% for image in images %}
+    <div class="falls_item h200" data-order="{{image.id}}">
+{#        <img src="{{ image.image.url }}">#}
+        <a href="javascript:void(0)" onclick="displayImage('{{image.user}}', '{{image.title}}', '{{image.image.url}}', '{{image.description}}', '{{request.get_host}}','{{ image.created }}')"><img src="{{ image.image.url }}"></a>
+        <p>{{ image.title }}</p>
+        <small>作者：<a href="{% url 'article:author_articles' user.username %}">{{image.user}}</a></small>
+        <small>发布时间：{{image.created}}</small>
+        <br>
+        <button type="button" class="btn btn-default btn-sm" onclick="like_article({{ image.id }},'like')">
+          <span class="glyphicon glyphicon-thumbs-up"></span> 点赞
+        </button>
+        <small>为其点赞的用户:</small>
+        {% for user in image.users_like.all %}
+            <small><a href="{% url 'article:author_articles' user.username %}">{{ user.username }}</a></small>
+        {% endfor %}
+    </div>
+  {% endfor %}
+</div>
+</div>
+<script src='{% static "js/jquery.js" %}'></script>
+<script src="{% static 'js/mp.mansory.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/layer.js'%}"></script>
+<script type="text/javascript">
+    jQuery(document).ready(function ( $ ) {
+        $("#my-gallery-container").mpmansory(
+            {
+                childrenClass: 'falls_item', // default is a div
+                columnClasses: 'falls_padding', //add classes to items
+                breakpoints:{
+                    lg: 3,
+                    md: 4,
+                    sm: 6,
+                    xs: 12
+                },
+                distributeBy: { order: false, height: false, attr: 'data-order', attrOrder: 'desc' }, //default distribute by order, options => order: true/false, height: true/false, attr => 'data-order', attrOrder=> 'asc'/'desc'
+            }
+        );
+    });
+
+function displayImage(user, title, url, description, host,create){
+    layer.open({
+      type: 1,
+      title: title,
+      skin: 'layui-layer-rim', //加上边框
+      area: ['500px', '500px'], //宽高
+      content: '<div class="text-center"><img class="img-responsive img-thumbnail img-rounded" src="http://'+host+url+'"><p>发布者：'+user+'</p></div><div style="margin-left:10px;"><h4 class = "text-center">'+description+'</h4><h4 class="text-center">发布时间：'+create+'</h4></div>'
+     ,
+    });      
+}
+
+function like_article(id,action) {
+    $.ajax({
+        url:"{% url 'image:like_dongtai' %}",
+        type:"POST",
+        data:{"id":id,"action":action},
+        success:function (e) {
+            if(e){
+                layer.msg(e);
+                window.location.reload();
+            }else {
+                 layer.msg("我会继续努力");
+                 window.location.reload();
+            }
+        }
+    })
+}
+
+
+</script>
+{% endblock %}
+

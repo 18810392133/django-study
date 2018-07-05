@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}author`s articles{% endblock %}
+{% block content %}
+    <div class="row text-center ">
+        <h4>读书使人进步</h4>
+    </div>
+
+    <div class="container">
+
+{#        作者的全部文章#}
+        <div class="col-md-8">
+            <h4>他的全部文章</h4>
+            {% for article in articles %}
+                <div class="list-group">
+{#                    取得每一个文章的链接，可以查看详情#}
+                    <a href="{{ article.get_url_path }}" class="list-group-item active">
+                        <h4 class="list-group-item-heading"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;&nbsp;{{ article.title }}</h4>
+                    </a>
+                    <p class="list-group-item-text">
+                        作者：<a href="{% url 'article:author_articles' article.author.username %}">{{ article.author.username }}</a>
+                    </p>
+                    <p class="list-group-item-text">
+                        概要：{{ article.body|slice:'70'|linebreaks }}
+                    </p>
+                </div>
+            {% endfor %}
+        {% include 'paginator.html' %}
+        <hr>
+        {#    作者的全部课程#}
+        <div >
+            <h4>他的全部课程</h4>
+            {% for course_of_user in courses_of_user %}
+                <div class="list-group">
+{#                    取得每一个文章的链接，可以查看详情#}
+                    <a href="{% url 'course:list_lessons' course_of_user.id %}" class="list-group-item default">
+                        <h4 class="list-group-item-heading"><span class="glyphicon glyphicon-book"></span>&nbsp;&nbsp;{{ course_of_user.title }}</h4>
+                    </a>
+                    <p class="list-group-item-text">
+                        作者：<a href="{% url 'article:author_articles' user.username %}">{{ user.username }}</a>
+                    </p>
+                    <p class="list-group-item-text">
+{#                        概要：{{ article.body|slice:'70'|linebreaks }}#}
+                        课程介绍：{{ course_of_user.overview|slice:'70'|linebreaks }}
+                    </p>
+                </div>
+            {% endfor %}
+        </div>
+        </div>
+
+{#    作者的个人信息#}
+        <div class=col-md-4>
+{#            用户照片#}
+            <div>
+                {% if userinfo.photo %}
+                    <img src="{{ userinfo.photo|striptags }}" class="img-circle" id="my_photo" name="user_face">
+                {% else %}
+                    <img name="user_face" src="{% static 'images/2.PNG' %}" class="img-circle" width="100px">
+                {% endif %}
+            </div>
+{#              用户信息#}
+            <div>
+                <p>{{ user.username }}</p>
+                <p>用户：{{ user.username }}总共发表{{ user.article.count }}篇文章</p>
+                {% if userinfo %}
+                    <p>{{ userinfo.company }}</p>
+                    <p>{{ userinfo.aboutme }}</p>
+
+                 {% else %}
+                    <p>作者太懒了，什么都没有留下。</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

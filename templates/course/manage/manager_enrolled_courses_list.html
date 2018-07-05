@@ -1,0 +1,64 @@
+{% extends "article/base.html" %}
+{% load staticfiles %}
+{% block title %}manage courses{% endblock %}
+
+{% block content %}
+<div>
+    <h2>我已注册的课程</h2>
+    <div class='text-right'><a href="{% url 'course:create_course' %}"><button type="button" class="btn btn-primary">添加课程</button></a></div>
+    <table class="table table-hover" style="margin-top:10px">
+    	<tr>
+            <td>序号</td>
+            <td>课程标题</td>
+            <td>讲师</td>
+            <td>发布日期</td>
+    	    <td>操作</td>
+    	</tr>
+    	{% for course in enrolled_courses %}
+    	<tr id={{ forloop.counter }}>
+    	    <td>{{ forloop.counter }}</td>
+            <td><a href="{% url 'course:list_lessons' course.id %}">{{ course.title }}</a></td>
+            <td><a href="{% url 'article:author_articles' course.user.username %}">{{ course.user }}</a></td>
+    	    <td>{{ course.created|date:"Y-m-d" }}</td>
+    	    <td>
+                <button class="btn-sm" onclick="del_enrolled_course(this,{{ course.id }})">退出课程</button>
+    	        <a href="{% url 'course:list_lessons' course.id %}"><span class="glyphicon glyphicon-search" style="margin-left:20px;"></span></a>
+            </td>
+    	</tr>
+    	{% endfor %}
+    </table>
+</div>
+
+{% endblock %}
+{% block javascript %}
+        <script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
+        <script type="text/javascript" src = "{% static 'js/layer.js' %}"></script>
+        <script type="text/javascript">
+            function del_enrolled_course(the,course_id){
+                var course_name = $(the).parents("tr").children("td").eq(1).text();
+                layer.open({
+    type: 1,
+    skin: "layui-layer-rim",
+    area: ["400px", "200px"],
+    title: "删除已经注册的课程",
+    content: '<div class="text-center" style="margin-top:20px"><p>是否确定退出{'+course_name+'}课程</p></div>',
+    btn:['确定', '取消'],
+    yes: function(){
+    $.ajax({
+    url: "/course/drop_out_of_course/"+course_id+"/",
+    type:"POST",
+    data: {"course_id":course_id},
+    success: function(e){
+    if(e=="1"){
+    parent.location.reload();
+    layer.msg("成功退出");
+    }else{
+    layer.msg("退出失败");
+    }
+    },
+    })
+    },
+    });
+            }
+         </script>
+    {% endblock %}

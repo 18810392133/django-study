@@ -1,0 +1,96 @@
+{#{% extends 'base.html' %}#}
+{#{% block title %}文章{% endblock %}#}
+{#{% block content %}#}
+{#    <div class="row text-center">#}
+{#        <h1>阅读，丰富头脑，善化行为</h1>#}
+{#    </div>#}
+{#    <div class="container">#}
+{#        {% for article in articles %}#}
+{#            <div class="list-group">#}
+{#                <a href="#" class="list-group-item active">#}
+{#                    <a href="{{ article.get_url_path }}" class="list-group-item active"><h4 class="list-group-item-heading">{{ article.title }}</h4></a>#}
+{#                    <p class="list-group-item-text">作者：<a href="{% url 'article:author_articles' article.author.user %}">{{ article.author.username }}</a></p>#}
+{#                    <p class="list-group-item-text">概要：{{ article.body|slice:'70'|linebreaks }}</p>#}
+{#                </a>#}
+{#            </div>#}
+{#        {% endfor %}#}
+{#    {% include 'paginator.html' %}#}
+{#    </div>#}
+{#{% endblock %}#}
+
+{% extends 'base.html' %}
+{#{% load article_tags %}#}
+{% block title %}文章{% endblock %}
+{% block content %}
+<div class="row text-center">
+    <h1>丰富头脑，善化行为</h1>
+</div>
+     <div class="container">
+     <div class="row">
+     <div class="col-md-9">
+{#     同标签的文章#}
+         {% if similar_articles %}
+             <h4 class="text-center text-muted">标签：{{ current_tag_name.tag }}目前已经有{{ total_articles }}篇文章供你阅读</h4>
+             <a href="{% url 'article:list_article_titles' %}"><h4 class="text-center text-info">点此回到全部文章</h4></a>
+             {% for article in similar_articles %}
+                <div class="list-group">
+                    <a href="#" class="list-group-item active">
+                        <h4 class="list-group-item-heading"><a href="{{ article.get_url_path}}" class="list-group-item active">{{ article.title }}</a></h4>
+                        <p class="list-group-item-text">作者：<a href="{% url 'article:author_articles' article.author.username %}">{{ article.author.username }}</a></p>
+                        <p class="list-group-item-text">概要：{{ article.body|slice:'70'|linebreaks }}</p>
+                    </a>
+                </div>
+            {% empty %}
+                <h4 class="list-group-item-heading">此标签下没有文章</h4>
+             {% endfor %}
+             {% include 'paginator.html' %}
+{#              同样栏目下的文章     #}
+             {% elif same_column_articles %}
+             <h4 class="text-center text-muted">栏目：{{ current_column_name.column }}目前已经有{{ total_articles }}篇文章供你阅读</h4>
+             <a href="{% url 'article:list_article_titles' %}"><h4 class="text-center text-info">点此回到全部文章</h4></a>
+             {% for article in same_column_articles %}
+                <div class="list-group">
+                    <a href="#" class="list-group-item active">
+                        <h4 class="list-group-item-heading"><a href="{{ article.get_url_path}}" class="list-group-item active">{{ article.title }}</a></h4>
+                        <p class="list-group-item-text">作者：<a href="{% url 'article:author_articles' article.author.username %}">{{ article.author.username }}</a></p>
+                        <p class="list-group-item-text">概要：{{ article.body|slice:'70'|linebreaks }}</p>
+                    </a>
+                </div>
+            {% empty %}
+                <h4 class="list-group-item-heading">此栏目没有文章</h4>
+             {% endfor %}
+             {% include 'paginator.html' %}
+{#             显示全部文章#}
+            {% else %}
+             <h4 class="text-center text-muted">所有文章目前已经有{{ total_articles }}篇文章供你阅读</h4>
+              <a href="{% url 'article:list_article_titles' %}"><h4 class="text-center text-info">点此回到全部文章</h4></a>
+            {% for article in articles %}
+                <div class="list-group">
+                    <a href="#" class="list-group-item active">
+                        <h4 class="list-group-item-heading"><a href="{{ article.get_url_path}}" class="list-group-item active"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;&nbsp;{{ article.title }}</a></h4>
+                        <p class="list-group-item-text">作者：<a href="{% url 'article:author_articles' article.author.username %}">{{ article.author.username }}</a></p>
+                        <p class="list-group-item-text">概要：{{ article.body|slice:'70'|linebreaks }}</p>
+                    </a>
+                </div>
+            {% endfor %}
+             {% include 'paginator.html' %}
+         {% endif %}
+
+
+     </div>
+     <div class="col-md-3 ">
+         <h3>当前所有的栏目：</h3>
+        {% for column in all_column %}
+            <a href="{% url 'article:same_column_articles' column.id %}"><button type="button" class="btn btn-primary btn-sm" style="margin-top: 10px"> <span class="	glyphicon glyphicon-th-list"></span> {{ column.column }}</button></a>
+        {% endfor %}
+     </div>
+     <div class="col-md-3 ">
+         <h3>当前所有的标签：</h3>
+        {% for tag in tags %}
+            <a href="{% url 'article:same_tag_articles' tag.id %}"><button type="button" class="btn btn-primary btn-sm" style="margin-top: 10px"> <span class="glyphicon glyphicon-tags"></span> {{ tag.tag }}</button></a>
+        {% endfor %}
+     </div>
+
+     </div>
+     </div>
+{% endblock %}

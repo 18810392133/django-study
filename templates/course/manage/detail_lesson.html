@@ -1,0 +1,36 @@
+{% extends "article/base.html" %}
+{% block title %}Lesson Detail{% endblock %}
+{% block content %}
+<div>
+    <div class='text-center'>
+        <h1>{{ lesson.title }}</h1>
+        <p><a href="{% url 'article:author_articles' lesson.user.username %}">讲师：{{ lesson.user.username }}</a></p>
+{#        <p>已有学生：</p>#}
+    </div>
+    <div>
+      {% if lesson.video %}
+      <video src="{{ lesson.video.url }}"  controls="controls" class="text-center" width=100% ></video>
+      {% else %}
+      <p class="text-center">There is not video lesson.</p>
+      {% endif %}
+    </div>
+    <div>
+      {% if lesson.description %}
+      <p>课程简介：{{ lesson.description }}</p>
+      {% endif %}
+    </div>
+    <div>
+      {% if lesson.attach %}
+      <p><a href="{{ lesson.attach.url }}">课程附件:{{ lesson.attach.name | cut:"courses/user_" }}</a></p>
+      {% endif %}
+    </div>
+</div>
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        var video = document.getElementsByTagName("video");
+        video.onended = function () {
+            alert("成功学完所有课程");
+        }
+    </script>
+{% endblock %}

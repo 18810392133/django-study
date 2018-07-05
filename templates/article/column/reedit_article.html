@@ -1,0 +1,107 @@
+{% extends 'article/base.html' %}
+{% load staticfiles %}
+{% block title %}修改文章{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'editor/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'editor/css/editormd.css' %}">
+{% endblock %}
+{% block content %}
+<div class="container">
+
+    <div class="col-md-10">
+        <div style="margin-left: 10px">
+            <form class="form-horizontal" action="." method="post">
+                {% csrf_token %}
+{#            修改标题#}
+                <div class="row" style="margin-top: 10px">
+                    <div class="col-md-2 text-right"><span>标题：</span></div>
+                    <div class="col-md-10 text-left" >{{ this_article_form.title }}</div>
+                </div>
+{#                修改栏目#}
+                <div class="row" style="margin-top: 10px">
+                    <div class="col-md-2 text-right"><span>栏目：</span></div>
+                    <div class="col-md-10 text-left" >
+                        <select id="which_column">
+                            {% for column in all_column %}
+                                {% if column == this_article_column.column %}
+                                     <option value="{{ column.id }}" selected="selected">{{ column.column }}</option>
+                                {% else %}
+                                    <option value="{{ column.id }}">{{ column.column }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+{#            修改标签#}
+             <div class="row" style="margin-top: 10px;">
+            <div class="col-md-2 text-right"><span>文章标签:</span></div>
+            <div class="col-md-10 text-left">
+                {% for tag in article_tags %}
+                <label class="checkbox-inline">
+                    <input class="tagcheckbox" type="checkbox" id="{{ tag.id }}" name="article_tag" value="{{ tag.tag }}"> {{ tag.tag }}
+                </label>
+                {% empty %}
+                <p>You have not type tags for articles. Please <a href="{% url 'article:article_tag' %}">input your tags</a></p>
+                {% endfor %}
+            </div>
+            </div>
+{#            修改内容#}
+                <div class="row" style="margin-top: 10px">
+                    <div class="col-md-2 text-right"><span>内容：</span></div>
+                    <div id="editormd" class="col-md-10 text-left">
+                        <textarea style="display: none" id="id_body">
+                            {{ article.body }}
+                        </textarea>
+                    </div>
+                </div>
+{#            发布按钮#}
+                <div class="row">
+                    <input value="发布" onclick="reedit_article()" class="btn btn-primary" type="button">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript" src='{% static "js/jquery.js" %}'></script>
+    <script type="text/javascript" src='{% static "editor/editormd.min.js" %}'></script>
+    <script type="text/javascript" src="{% static 'js/layer.js'%}"></script>
+    <script type="text/javascript" src="{% static 'js/json2.js' %}"></script>
+{#    让编辑器显示出的函数#}
+    <script type="text/javascript">
+        $(function() {
+        var editor = editormd("editormd", {
+            width   : "100%",
+            height  : 640,
+            //syncScrolling : "single",
+            path    : "{% static 'editor/lib/' %}",
+        });
+    });
+    </script>
+{#    Ajax传值#}
+    <script type="text/javascript">
+        function reedit_article() {
+            var title = $("#id_title").val();
+            var column_id = $("#which_column").val();
+            var body = $("#id_body").val();
+            var article_tags = [];
+            $.each($("input[name='article_tag']:checked"), function(){article_tags.push($(this).val());});
+            $.ajax(
+                {
+                    url:"{% url 'article:reedit_article' article.id %}",
+                    type:"POST",
+                    data:{"title":title,"column_id":column_id,"body":body,"tags":JSON.stringify(article_tags)},
+                    success:function (e) {
+                        if (e == "1"){
+                            layer.msg("successful");
+                            location.href = "{% url 'article:article_list' %}";
+                        }else {
+                            layer.msg("sorry");
+                        }
+                    }
+                }
+            )
+        }
+    </script>
+{% endblock %}

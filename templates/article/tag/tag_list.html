@@ -1,0 +1,113 @@
+{% extends "article/base.html" %}
+
+{% load staticfiles %}
+
+{% block title %}articles tag{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" type="text/css">
+    <linl rel="stylesheet" href="{% static 'css/normalize.css-master/normalize.css' %}" type="text/css">
+{% endblock %}
+
+{% block content %}
+<div>
+    <p>添加文章标签</p>
+	<form class="form-horizontal" action="." method="post">{% csrf_token %}
+        <div class="row" style="margin-top: 10px;">
+            <div class="col-md-2 text-right"><span>文章标签</span></div>
+            <div class="col-md-10 text-left">{{article_tag_form.tag}}</div>
+        </div>
+        <div class="row">
+            <input type="button" class="btn btn-primary btn-lg" style="margin-left:200px; margin-top:10px;" value="添加" onclick="add_tag()" id="add">
+        </div>
+    </form>
+</div>
+<div>
+    <p>已有标签列表</p>
+    <table class="table table-hover" id="tags">
+    	<tr>
+    	    <td>序号</td>
+    	    <td>文章标签</td>
+    	    <td>操作</td>
+    	</tr>
+    	{% for article_tag in article_tags %}
+    	<tr id={{ forloop.counter }}>
+    	    <td>{{ forloop.counter }}</td>
+    	    <td>{{ article_tag.tag }}</td>
+    	    <td>
+    	        <a nane="delete" href="javascript:" onclick="del_tag(this, {{ article_tag.id }})"><span class="glyphicon glyphicon-trash"></span></a>
+    	    </td>
+    	</tr>
+        {% empty %}
+    	<p>You have no article tags. Please add them.</p>
+    	{% endfor %}
+    </table>
+</div>
+<script type="text/javascript" src='{% static "js/jquery.js" %}'></script>
+<script type="text/javascript" src="{% static 'js/layer.js'%}"></script>
+<script type="text/javascript">
+	function add_tag(){
+		tag = $("#id_tag").val();
+		$.ajax({
+			url: '{% url "article:article_tag" %}',
+			type: "POST",
+            data: {"tag":tag},
+            success: function(e){
+            	if(e==tag){
+                 {#   var tr = document.createElement('tr');#}
+                    {#设置table的属性#}
+                 {#   var table  = document.getElementById("tags");#}
+                 {#   var td = document.createElement('td');#}
+                 {#   var td1 =  document.createElement('td');#}
+                 {#   var td2 = document.createElement('td');#}
+                 {#//   table.setAttribute("class","table table-hover");#}
+                 {#   td.innerHTML = '1';#}
+                 {#   td1.innerHTML = e;#}
+                 {#   td2.innerHTML = '<a nane="delete" href="javascript:" onclick="del_tag(this, {{ article_tag.id }})"><span class="glyphicon glyphicon-trash"></span></a>';#}
+                 {#   tr.appendChild(td);#}
+                 {#   tr.appendChild(td1);#}
+                 {#   tr.appendChild(td2);#}
+                 {#   table.appendChild(tr);#}
+            		layer.msg("You have added a new tag."+e);
+            		window.location.reload();
+            	}
+                 else {
+            		layer.msg("the data cannot resolve");
+                }}
+		});
+	}
+
+function del_tag(the, tag_id){
+	var article_tag = $(the).parents("tr").children("td").eq(1).text();
+	layer.open({
+		type: 1,
+		skin: "layui-layer-rim",
+		area: ["400px", "200px"],
+		title: "删除文章标签",
+		content: '<div class="text-center" style="margin-top:20px"><p>是否确定删除文章标签《'+article_tag+'》</p></div>',
+		btn:['确定', '取消'],
+		yes: function(){
+			$.ajax({
+				url: '{% url "article:del_article_tag" %}',
+				type:"POST",
+				data: {"tag_id":tag_id},
+				success: function(e){
+					if(e=="1"){
+						parent.location.reload();
+						layer.msg("The tag has been deleted.");
+					}else{
+						layer.msg("删除失败");
+					}
+					
+				},
+			})	
+		},
+	});
+}
+
+</script>
+
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript" href="{% static 'js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" href="{% static 'js/jquery.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+	<title>运维平台</title>
+
+	<link rel="stylesheet" type="text/css" href="/static/Css/Monitor/maintainredis.css">
+
+	<link rel="stylesheet" type="text/css" href="/static/Css/Public/header.css">
+
+	<link rel="stylesheet" type="text/css" href="/static/Css/Public/menu.css">
+
+</head>
+
+<body>
+
+	<include file="Public:header"/>
+
+	<div class="content">
+
+		<include file="Public:menu"/>
+
+		<div class="con fl">
+
+			<div id="condition">
+
+				<label class="condition">IP</label><input type="text" name="condition" class="equipment_sz">
+
+				<input type="submit" value="设备查询" class="equipment_search_btn es_1">
+
+				<!--<input type="submit" value="组查找" class="equipment_search_btn es_2">-->
+
+			</div>
+
+			<table class="gridtable">
+
+				<tr>
+
+					<th>APP</th><th>IP</th><th>QUEUE</th><th>Number Of Pending Messages</th>
+
+				</tr>
+
+			</table>
+
+		</div>
+
+	</div>
+
+</body>
+
+<script type="text/javascript" src="/static/Js/jquery-2.2.2.min.js"></script>
+
+<script type="text/javascript" src="/static/Js/Monitor/maintainredis.js"></script>
+
+<script type="text/javascript" src="/static/Js/Public/ajax.js"></script>
+<script>
+
+
+$(function(){
+
+        var _condition = $(".equipment_sz").val();
+
+        var _ip_bt = $(".content .con #condition .es_1");
+
+                _ip_bt.on('click',function(){
+
+                var _condition = $(".equipment_sz").val();
+
+                var data={};
+
+                data.condition=_condition;
+
+                var successfn = function(jdata){
+
+                $(".gridtable").empty();
+
+                var _HTML="<tr><th>APP </th><th>IP</th><th>QUEUE</th><th>Number Of Pending Messages</tr>"
+
+                $.each(jdata,function(i,val){
+
+                _HTML=_HTML+"<tr><td>"+jdata[i][0]+"</td><td>"+jdata[i][1]+"</td><td>"+jdata[i][2]+"</td><td>"+jdata[i][3]+"</td></tr>";
+
+                 });
+
+                $(".gridtable").html(_HTML);
+
+                };
+
+                var errorfn = function(){
+
+                    alert("数据获取出错");
+
+                };
+
+                $.ax(
+
+                "/api/search_activemq_ip/",
+
+                data,
+
+                successfn,
+
+                errorfn
+
+        );
+
+        });
+
+	}
+
+)
+
+</script>
+</html>
+
+
+
+
+3.
+
+
+
+def search_activemq_ip(req):
+
+    print req.get_full_path()
+
+    print req.POST['condition']
+
+    condition= req.POST['condition']
+
+    if condition:
+
+       conn= MySQLdb.connect(
+
+        host='127.0.0.1',
+
+        port = 3306,
+
+        user='root',
+
+        passwd='1234567',
+
+        db ='DEVOPS',
+
+        charset="UTF8",
+
+        )
+
+       cur = conn.cursor()
+
+       a = cur.execute("select user,password,name,ip,port from mon_activemq  where ip=%s ",[condition])
+
+       info = cur.fetchone()
+
+       print info
+
+       user=info[0].encode('utf-8')
+
+       code=info[1].encode('utf-8')
+
+       app=info[2].encode('utf-8')
+
+       ip=info[3].encode('utf-8')
+
+       port=info[4].encode('utf-8')
+
+       print user
+
+       print type(user)
+
+       print app
+
+       print type(app)
+
+       output=commands.getoutput("/home/mqm/sbin/activemq/view_activemq %s %s %s %s %s "  %(user,code,app,ip,port) )
+
+       print output
+
+       print type(output)
+
+       output=output.rstrip('||')
+
+       print output
+
+       print type(output)
+
+       arr1=[]
+
+       arr2=[]
+
+       arr3=[]
+
+       arr1=output.split('||')
+
+       print arr1
+
+       print type(arr1)
+
+       for x in arr1:
+
+           arr2=x.split('->')
+
+           arr3.append(arr2)
+
+       print '---------------------'
+
+       print arr3
+
+       print type(arr3)
+
+       return HttpResponse(json.dumps(arr3), content_type="application/json")
+
+
+
+
+
+</body>
+</html>

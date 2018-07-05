@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}blog_titles{% endblock%}
+{% block content %}
+    <div class = "row text-center vertical-middle-sm">
+    <h1>我的article</h1>
+    </div>
+    <div class = "row">
+        <div class = "col-xs-12 col-md-8">
+            <ul>
+                {% for blog in blogs %}
+                    <li><a href="{{ blog.id }}">{{ blog.title }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ blog.author }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class = "col-xs-6 col-md-4">
+            <h2>广告</h2>
+            <p>Django makes it easier to build better Web apps more quickly and with less code. </p>
+            <img src="http://pic.sc.chinaz.com/files/pic/pic9/201803/bpic6216.jpg" width="100px">
+        </div>
+    </div>
+{% endblock %}

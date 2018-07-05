@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}LOGIN{% endblock %}
+{% block content %}
+    <div class = 'row text-center vertical-middl-sm'>
+        <h1>Login</h1>
+        <p>Input your username and password</p>
+        <form class ='form-horizontal' action="." method="post" id = 'userform' role="form">
+            {% csrf_token %}
+{#            {{ unlogin_user.as_p }}#}
+            <div class = 'form-group'>
+                <label for="{{ unlogin_user.user_name.id_for_label }}" class = 'col-md-5 control-label ' style="color: red" ><span class ='glyphicon glyphicon-user'>Your name</span></label>
+                <div class = 'col-md-6 text-left'>{{ unlogin_user.user_name }}{{ user_to_check.user_name }}{{ user_to_check.errors.user_name.0 }}{{ user.errors.user_name.0 }}</div>
+            </div>
+            <div class = 'form-group'>
+                <label for="{{ unlogin_user.user_password.id_for_label }}" class = 'col-md-5 control-label ' style="color:blue" ><span class ='glyphicon glyphicon-floppy-open'>Your password</span></label>
+                <div class = 'col-md-6 text-left'>{{ unlogin_user.user_password }}{{ user_to_check.user_password }}{{ user_to_check.errors.user_password.0 }}</div>
+            </div>
+            <p>Forget your password?Please <a href="{% url 'pwd_reset:password_reset_recover' %}">reset you password</a></p>
+            <p>Don have an account <a href="{% url 'account:user_register' %}">register now</a></p>
+            <input type="submit" value="Login" class ='btn btn-primary btn-lg' id="submit">
+        </form>
+    </div>
+{% endblock %}
+
+{% block javascript%}
+
+    <script type="text/javascript">
+        $('#submit').click(submitData);
+        function submitData() {
+           var user_name =  $('#id_user_name').val();
+           var user_password = $('#id_user_password').val();
+           $.post("{% url 'account:user_login' %}",$('#userform').serialize()).always(function(data,status,obj){
+               alert(data);
+               $.ajax();
+           });
+        }
+    </script>
+{% endblock %}

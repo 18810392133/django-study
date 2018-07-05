@@ -1,0 +1,20 @@
+{% extends "article/base.html" %}
+{% block title %}create course{% endblock %}
+{% block content %}
+<div style="margin-left:100px;margin-top:10px;">
+  <form enctype="multipart/form-data" action="." method="post" class="form-horizontal">{% csrf_token %}
+    <div style="margin-top: 10px;">
+        <div class="col-md-2 text-left"><span>课程标题:</span></div>
+        <div class="col-md-10 text-left">{{form.title}}</div>
+    </div>
+      <br>
+      <br>
+    <div style="margin-top: 20px;">
+        <div class="col-md-2 text-left"><span>课程描述:</span></div>
+        <div class="col-md-10 text-left">{{form.overview}}</div>
+    </div>
+    <input type="submit" value="Create Course" class="btn-primary btn-lg align-center">
+  </form>
+</div>
+{% endblock %}
+

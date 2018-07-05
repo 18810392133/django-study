@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form class="cForm" id="cForm" method="post" action="">
+    <p>
+        <lable for="user">用户名</lable>
+        <input id="user" name="user" required minlength="3">
+    </p>
+    <p>
+        <label for="password">密码</label>
+        <input id="password" type="password" maxlength="12" name="password">
+    </p>
+    <p>
+        <input type="submit" value="提交" class="submit">
+    </p>
+</form>
+<script type="text/javascript">
+    $().ready(function () {
+        $("#cForm").validate({
+            onsubmit:true,//是否是在提交时验证
+            onfocusout:false,//是否是在获取焦点时验证
+            onkeyup:false,//是否是在敲击键盘时验证
+
+
+
+            rules:{//规则中对应的是表单中的name'属性
+                user:{
+                    required:true
+                },
+                password:{
+                    required:true
+                }
+            },
+            //验证 错误信息
+            message:{
+                user:{
+                    required:"亲爱的请输入你的名字"
+                },
+                password:{
+                    required:"亲爱的请输入你的密码"
+                }
+            },
+            //通过了之后,进行ajax传值
+            submitHandler:function (form) {
+                $.ajax({
+                    url:"{:U('user/index')}",
+                    type:"post",
+                    dataType:"json",
+                    data:{
+                        user:$(#user).val(),
+                        password:$(#password).val()
+                    },
+                    success:function (msg) {
+                        //要执行的代码
+                    }
+                });
+            },
+            invalidlHandler:function (form,validator) {
+                return false;
+
+            }
+        });
+    });
+</script>
+</body>
+
+</html>

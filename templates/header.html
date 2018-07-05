@@ -1,0 +1,57 @@
+{% load staticfiles %}
+<div class = 'container'>
+    <nav class = 'navbar navbar-default' role="navigation">
+        <div class = 'navbar-header'>
+            <a class = 'navbar-brand' href="{% url 'blog:blog_title' %}"><img src="{% static '/images/2.PNG' %}" width="20%"></a>
+        </div>
+        <div>
+
+            <ul class = 'nav navbar-nav' role="navigation">
+                <li><a href="{% url 'blog:blog_title' %}">首页</a> </li>
+            </ul>
+            <ul class = 'nav navbar-nav' role="navigation">
+                <li><a href="{% url 'article:list_article_titles'  %}">文章</a> </li>
+            </ul>
+
+             <ul class="nav navbar-nav">
+                <li><a href="{% url 'image:falls_images' %}">动态</a> </li>
+            </ul>
+            <ul class="nav navbar-nav">
+                <li><a href="{% url 'course:course_list' %}">课程</a> </li>
+{#                <li><a href="#">课程</a> </li>#}
+            <ul class="nav navbar-nav">
+                <li><a href="{% url 'article:article_column' %}">管理我的内容</a> </li>
+            </ul>
+            <ul class="nav navbar-nav">
+                <li><a href="{% url 'course:about' %}">关于我</a> </li>
+            </ul>
+            <ul class = 'nav navbar-nav navbar-right' style = 'margin-right: 10px'>
+                {% if user.is_authenticated %}
+                    <li>
+                    <div class="dropdown" style="margin-top: 8px">
+                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownmenu" data-toggle="dropdown">
+                            {{ user.username }}<span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'pwd_reset:password_reset_recover'%}">Change Password</a> </li>
+                            <li><a href="{% url 'account:my_information'%}">show my information</a> </li>
+                        </ul>
+                    </div>
+                    </li>
+                    <li><a href="{% url 'account:user_logout' %}">Logout</a></li>
+                {% else %}
+{#                    <li><a href="{% url 'account:user_login' %}">login</a></li>#}
+                    <li><a href="{% url 'account:user_login' %}">login</a></li>
+                    <li><a href="{% url 'account:user_register' %}">register</a> </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+</div>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+<script
+  src="http://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>

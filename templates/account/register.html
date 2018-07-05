@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block title %}User register{% endblock %}
+{% block content %}
+    <div class="row text-center vertical-middle-sm">
+        <h1>Register</h1>
+        <p>If you are a user,please <strong><a href="{% url "account:user_login" %}">login</a></strong></p>
+        <p>or register.</p>
+        <form class = "form-horizontal" action="." method="post">
+            {% csrf_token %}
+            <div class = "form-group">
+                <label for="{{ user_register_form.username.id_for_label }}" class = "col-md-5 control-label">Username:</label>
+                <div class ="col-md-6 text-left">{{ user_register_form.username }}</div>
+            </div>
+             <div class = "form-group">
+                <label for="{{ user_register_form.email.id_for_label }}" class = "col-md-5 control-label">Email:</label>
+                <div class ="col-md-6 text-left">{{ user_register_form.email}}</div>
+            </div>
+             <div class = "form-group">
+                <label for="{{ user_register_form.password.id_for_label }}" class = "col-md-5 control-label">Password:</label>
+                <div class ="col-md-6 text-left">{{ user_register_form.password}}</div>
+            </div>
+             <div class = "form-group">
+                <label for="{{ user_register_form.password.id_for_label }}" class = "col-md-5 control-label">ConfirmPassword:</label>
+                <div class ="col-md-6 text-left">{{ user_register_form.password2}}</div>
+            </div>
+             <div class = "form-group">
+                <label for="{{ user_profile_form.birth.id_for_label }}" class = "col-md-5 control-label">BirthDate:</label>
+                <div class ="col-md-6 text-left">{{ user_profile_form.birth}}</div>
+            </div>
+             <div class = "form-group">
+                <label for="{{ user_profile_form.phone.id_for_label }}" class = "col-md-5 control-label">Phone:</label>
+                <div class ="col-md-6 text-left">{{ user_profile_form.phone}}</div>
+            </div>
+            <input type="submit" class="btn btn-lg btn-primary" value="Register" onclick="f()">
+        </form>
+    </div>
+{% endblock %}
+{% block javascript %}
+{#取得全部form的值#}
+    <script type="text/javascript">
+        function f() {
+            id_username = $('id_username').val();
+            alert(id_username);
+        }
+    </script>
+{% endblock %}
